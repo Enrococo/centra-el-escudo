@@ -1,0 +1,152 @@
+<main class="page-shell">
+  <header class="topbar">
+    <a class="wordmark" href="./" aria-label="Centra el escudo, inicio">
+      <span class="brand-mark">C</span>
+      <span>centra<span class="wordmark-light">elescudo</span></span>
+    </a>
+    <span class="edition">UN JUEGO DE PRECISIÓN</span>
+  </header>
+
+
+@if (!ideologyConfirmed) {
+  <section class="ideology-screen">
+    <h1>¿Dónde te sitúas ideológicamente?</h1>
+
+    <input
+      type="range"
+      min="0"
+      max="100"
+      step="1"
+      [(ngModel)]="ideologyValue"
+    />
+
+    <div class="slider-labels">
+      <span>Izquierda</span>
+      <span>Centro</span>
+      <span>Derecha</span>
+    </div>
+
+    <button (click)="confirmIdeology()">
+      Confirmar y jugar
+    </button>
+  </section>
+} @else {
+  <section class="intro">
+    <p class="eyebrow">ESPAÑA · NIVEL 01</p>
+    <h1>
+      ¿Cuánto de cerca<br class="mobile-break" />
+      puedes estar?
+    </h1>
+    <p class="subtitle">Coloca el escudo en su posición y tamaño oficiales.</p>
+  </section>
+
+  <section class="game-area" aria-label="Juego para colocar el escudo en la bandera">
+    <div class="flag-frame">
+      <div
+        #flagBoard
+        class="flag-board"
+        [class.is-checked]="checked"
+        aria-label="Bandera de España. Arrastra el escudo para colocarlo."
+      >
+        <div class="flag-stripe red"></div>
+        <div class="flag-stripe yellow"></div>
+        <div class="flag-stripe red bottom"></div>
+
+        <div
+          class="shield"
+          [class.dragging]="isDragging"
+          [class.revealed]="checked"
+          [style.left.%]="position.x * 100"
+          [style.top.%]="position.y * 100"
+          [style.height.%]="shieldHeight * 100"
+          (pointerdown)="onPointerDown($event)"
+          (pointermove)="onPointerMove($event)"
+          (pointerup)="onPointerUp()"
+          (pointercancel)="onPointerUp()"
+          role="img"
+          aria-label="Escudo arrastrable"
+        >
+          <img src="/escudo-espana.svg" alt="Escudo de España" draggable="false" />
+        </div>
+
+        @if (checked) {
+          <div
+            class="target-marker"
+            [style.left.%]="target.x * 100"
+            [style.top.%]="target.y * 100"
+            [style.height.%]="targetHeight * 100"
+            aria-label="Posición y tamaño objetivo"
+          >
+            <span class="target-cross">+</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="flag-meta">
+      <span
+        ><span class="live-dot"></span>
+        {{ checked ? 'RONDA COMPLETADA' : 'ARRASTRA EL ESCUDO' }}</span
+      >
+      <span>PROPORCIÓN 3:2</span>
+    </div>
+
+    @if (!checked) {
+      <div class="controls">
+        <div class="size-control">
+          <div class="control-heading">
+            <label for="shield-size">Tamaño del escudo</label>
+            <span class="control-value">{{ shieldHeightPercent | number: '1.0-0' }}%</span>
+          </div>
+          <input
+            id="shield-size"
+            type="range"
+            min="12"
+            max="65"
+            step="1"
+            [value]="shieldHeightPercent"
+            (input)="onSizeChange($event)"
+          />
+          <div class="range-labels"><span>Más pequeño</span><span>Más grande</span></div>
+        </div>
+        <button class="primary-button" (click)="checkAnswer()">
+          Comprobar posición <span aria-hidden="true">↗</span>
+        </button>
+      </div>
+    }
+
+    @if (checked) {
+      <section class="result-panel" aria-live="polite">
+        <div class="result-score">
+          <span class="result-label">TU PRECISIÓN</span>
+          <div class="score-number">{{ score }}<span>/100</span></div>
+          <p>{{ scoreMessage }}</p>
+        </div>
+        <div class="score-breakdown">
+          <div class="score-row">
+            <span>Posición</span>
+            <div class="score-track"><span [style.width.%]="positionScore"></span></div>
+            <strong>{{ positionScore }}%</strong>
+          </div>
+          <div class="score-row">
+            <span>Tamaño</span>
+            <div class="score-track"><span [style.width.%]="sizeScore"></span></div>
+            <strong>{{ sizeScore }}%</strong>
+          </div>
+        </div>
+        <button class="primary-button" (click)="retry()">
+          Volver a jugar <span aria-hidden="true">↻</span>
+        </button>
+      </section>
+    }
+  </section>
+}
+
+
+  
+
+  <footer class="page-footer">
+    <span>OBSERVA · AJUSTA · ACERCA</span>
+    <span>HECHO PARA LOS DETALLES <span class="footer-star">✳</span></span>
+  </footer>
+</main>
